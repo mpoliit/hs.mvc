@@ -1,0 +1,16 @@
+{
+    "name": "maksp/hs.mvc",
+    "authors": [
+        {
+            "name": "m.poliit",
+            "email": "maks.poliit@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Core\\" : "Core",
+            "Controllers\\" : "App/Controllers"
+        }
+    }
+}
