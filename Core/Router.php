@@ -19,11 +19,15 @@ class Router
                 preg_match('/\w+:/', $param[0], $name_param, PREG_OFFSET_CAPTURE);
                 preg_match('/\w+:/', $param[0], $value_param, PREG_OFFSET_CAPTURE);
                 $params_value = '\/\d+\/';
-                array_push($params, [substr($name_param[0][0], 0, -1) => $params_value]);
+                //array_push($params, [substr($name_param[0][0], 0, -1) => $params_value]);
+                $key = substr($name_param[0][0], 0, -1);
+                $params[$key] = $params_value;
             }
             $route = str_replace('/', '\/', $route);
             $route = preg_replace ('/{\w+:\\\\\w+}/', '\\d+', $route);
             $route = '/^' . $route . '/';
+
+
             array_push($this->routes, ['route' => $route, 'action' => $action, 'params' => $params]);
 
             return;
@@ -37,7 +41,9 @@ class Router
                 preg_match('/\w+:/', $param[0], $name_param, PREG_OFFSET_CAPTURE);
                 preg_match('/\w+:/', $param[0], $value_param, PREG_OFFSET_CAPTURE);
                 $params_value = '\/\w+\/';
-                array_push($params, [substr($name_param[0][0], 0, -1) => $params_value]);
+                //array_push($params, [substr($name_param[0][0], 0, -1) => $params_value]);
+                $key = substr($name_param[0][0], 0, -1);
+                $params[$key] = $params_value;
             }
             $route = str_replace('/', '\/', $route);
             $route = preg_replace ('/{\w+:\\\\\w+}/', '\\w+', $route);
@@ -103,13 +109,13 @@ class Router
 
             if ($match) {
                 if (count($router['params'])){
-                    $key = array_keys($router['params'][0])[0];
-                    $reg = '/' . $router['params'][0][$key] . '/';
+                    $key = array_keys($router['params'])[0];
+                    $reg = '/' . $router['params'][$key] . '/';
                     preg_match_all($reg, $url, $match_value, PREG_SET_ORDER);
                     $val = $match_value[0][0];
                     $val = trim($val, '/');
 
-                    $router['params'][0][$key] = $val;
+                    $router['params'][$key] = $val;
                 }
 
                 return $router;

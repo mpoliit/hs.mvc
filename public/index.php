@@ -14,7 +14,7 @@ $router = new Router();
 
 require_once dirname(__DIR__) . '/config/routes.php';
 
-$router->getRouters();
+//$router->getRouters();
 
 try {
     $router->dispatch($_SERVER['REQUEST_URI']);
