@@ -1,16 +1,12 @@
 <?php
-/**
- * i - int
- * s - string
- */
 
 //index
-$router->addRouter('/', 'HomeController@index');
-$router->addRouter('home', 'HomeController@index');
+$router->addRoute('', 'HomeController@index');
+$router->addRoute('home', 'HomeController@index');
 
 //post
-$router->addRouter('posts/index', 'PostsController@index');
-$router->addRouter('posts/{id:\i}/edit', 'PostsController@edit');
+$router->addRoute('posts/index', 'PostsController@index');
+$router->addRoute('posts/{id:\d+}/edit', 'PostsController@edit');
 
 //test news
-$router->addRouter('news/{id:\s}/edit', 'PostsController@edit');
+$router->addRoute('news/{alias:\w+}/edit', 'PostsController@editNews');

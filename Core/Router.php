@@ -4,123 +4,94 @@ namespace Core;
 
 class Router
 {
-    protected $uri;
-
     protected $routes = [];
 
-    public function addRouter($route, $action){
-        $params = [];
+    protected $params = [];
 
-        //чилосвые параметры
-        preg_match_all("/{\w+:\\\i}/", $route, $match_int, PREG_SET_ORDER);
+    protected $convertTypesRegular = [
+        'd' => 'int',
+        'w' => 'string'
+    ];
 
-        if ($match_int){
-            foreach ($match_int as $param){
-                preg_match('/\w+:/', $param[0], $name_param, PREG_OFFSET_CAPTURE);
-                preg_match('/\w+:/', $param[0], $value_param, PREG_OFFSET_CAPTURE);
-                $params_value = '\/\d+\/';
-                //array_push($params, [substr($name_param[0][0], 0, -1) => $params_value]);
-                $key = substr($name_param[0][0], 0, -1);
-                $params[$key] = $params_value;
-            }
-            $route = str_replace('/', '\/', $route);
-            $route = preg_replace ('/{\w+:\\\\\w+}/', '\\d+', $route);
-            $route = '/^' . $route . '/';
+    public function addRoute($route, $params){
+        //escape slashes
+        $route = preg_replace('/\//', '\\/', $route);
+        //convert parameters {id:\d+}
+        $route = preg_replace('/\{([a-z]+):([^\}]+)\}/', '(?P<\1>\2)', $route);
+        $route = '/^' . $route . '$/i';
 
-
-            array_push($this->routes, ['route' => $route, 'action' => $action, 'params' => $params]);
-
-            return;
-        }
-
-        //строковые параметры
-        preg_match_all("/{\w+:\\\s}/", $route, $match_string, PREG_SET_ORDER);
-
-        if ($match_string){
-            foreach ($match_string as $param){
-                preg_match('/\w+:/', $param[0], $name_param, PREG_OFFSET_CAPTURE);
-                preg_match('/\w+:/', $param[0], $value_param, PREG_OFFSET_CAPTURE);
-                $params_value = '\/\w+\/';
-                //array_push($params, [substr($name_param[0][0], 0, -1) => $params_value]);
-                $key = substr($name_param[0][0], 0, -1);
-                $params[$key] = $params_value;
-            }
-            $route = str_replace('/', '\/', $route);
-            $route = preg_replace ('/{\w+:\\\\\w+}/', '\\w+', $route);
-            $route = '/^' . $route . '/';
+        $params = explode('@', $params);
+        $parameters['controller']   = $params[0];
+        $parameters['action']       = $params[1];
 
 
-            array_push($this->routes, ['route' => $route, 'action' => $action, 'params' => $params]);
-
-            return;
-        }
-
-        //все другие параметры
-        $route = preg_replace('/\//', '\/', $route);
-        $route = '/^' . $route . '/';
-
-        array_push($this->routes, ['route' => $route, 'action' => $action, 'params' => $params]);
-
+        $this->routes[$route] = $parameters;
     }
 
     public function getRouters(){
-        echo '<pre>';
-        print_r($this->routes);
-        echo '</pre>';
+        return $this->routes;
     }
 
     public function dispatch($url){
-        $this->uri = $url;
-        //оберазем /
+        $url = trim($url, '/');
+        $url = $this->removeGetParameters($url);
 
+        if($this->match($url)){
+            $controller = $this->params['controller'];
+            if (class_exists('Controllers\\'.$controller)){
+                $controller = 'Controllers\\'.$controller;
+                $action = $this->params['action'];
 
-        //проверка существования роута
-        $params = $this->checkRouter();
+                unset($this->params['controller']);
+                unset($this->params['action']);
 
-        if(is_string($params['action'])){
-            $params['action'] = explode('@', $params['action']);
-
-            $controller = '\Controllers\\' . $params['action'][0];
-            if (class_exists($controller)){
                 $controller = new $controller;
-                if (isset($params['params'])){
-                    call_user_func_array(array($controller, $params['action'][1]), $params['params']);
-                } else {
-                    call_user_func([$controller, $params['action'][1]]);
-                }
+                call_user_func_array([$controller, $action], $this->params);
+
             } else {
                 throw new \Exception("Controller $controller not found.");
             }
+        } else {
+            $controller     = 'Controllers\\ErrorController';
+            $action         =  'error404';
+
+            $controller = new $controller;
+            call_user_func_array([$controller, $action], $this->params);
+
         }
     }
 
-    protected function checkRouter(){
-        if (strstr($this->uri, '?')){
-            $url = strstr($this->uri, '?', true);
-        } else {
-            $url = $this->uri;
-        }
+    protected function removeGetParameters($url){
+        if ($url != ''){
+            $parts = explode('&', $url, 2);
 
-
-        $url = ($url != '/') ? trim($url, '/') : $url;
-
-        foreach ($this->routes AS $router) {
-            preg_match_all($router['route'], $url, $match, PREG_SET_ORDER);
-
-            if ($match) {
-                if (count($router['params'])){
-                    $key = array_keys($router['params'])[0];
-                    $reg = '/' . $router['params'][$key] . '/';
-                    preg_match_all($reg, $url, $match_value, PREG_SET_ORDER);
-                    $val = $match_value[0][0];
-                    $val = trim($val, '/');
-
-                    $router['params'][$key] = $val;
-                }
-
-                return $router;
+            if (strpos($parts[0], '=') === false){
+                $url = $parts[0];
+            } else {
+                $url = '';
             }
         }
-        return ['action' => 'ErrorController@error404'];
+
+        return $url;
+    }
+
+    public function match($url){
+        foreach ($this->routes as $route => $params) {
+            if (preg_match($route, $url, $matches)){
+                preg_match_all('|\(\?P<[\w]+>\\\\(\w[\+])\)|', $route, $types);
+                $step = 0;
+                foreach ($matches as $key => $match) {
+                    if (is_string($key)) {
+                        $types[1] = str_replace('+', '', $types[1]);
+                        settype($match, $this->convertTypesRegular[$types[1][$step]]);
+                        $params[$key] = $match;
+                        $step++;
+                    }
+                }
+
+                $this->params = $params;
+                return true;
+            }
+        }
     }
 }
