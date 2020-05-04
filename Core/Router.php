@@ -8,6 +8,11 @@ class Router
 
     protected $routes = [];
 
+    protected $type = [
+        'd' => 'int',
+        'w' => 'str'
+    ];
+
     public function addRouter($route, $action){
         $params = [];
 
@@ -15,21 +20,11 @@ class Router
         preg_match_all("/{\w+:\\\i}/", $route, $match_int, PREG_SET_ORDER);
 
         if ($match_int){
-            foreach ($match_int as $param){
-                preg_match('/\w+:/', $param[0], $name_param, PREG_OFFSET_CAPTURE);
-                preg_match('/\w+:/', $param[0], $value_param, PREG_OFFSET_CAPTURE);
-                $params_value = '\/\d+\/';
-                //array_push($params, [substr($name_param[0][0], 0, -1) => $params_value]);
-                $key = substr($name_param[0][0], 0, -1);
-                $params[$key] = $params_value;
-            }
-            $route = str_replace('/', '\/', $route);
-            $route = preg_replace ('/{\w+:\\\\\w+}/', '\\d+', $route);
-            $route = '/^' . $route . '/';
+            $checkParams = $this->checkParamRouter($match_int, $route, 'int');
 
-
+            $route = $checkParams['route'];
+            $params = $checkParams['params'];
             array_push($this->routes, ['route' => $route, 'action' => $action, 'params' => $params]);
-
             return;
         }
 
@@ -37,21 +32,11 @@ class Router
         preg_match_all("/{\w+:\\\s}/", $route, $match_string, PREG_SET_ORDER);
 
         if ($match_string){
-            foreach ($match_string as $param){
-                preg_match('/\w+:/', $param[0], $name_param, PREG_OFFSET_CAPTURE);
-                preg_match('/\w+:/', $param[0], $value_param, PREG_OFFSET_CAPTURE);
-                $params_value = '\/\w+\/';
-                //array_push($params, [substr($name_param[0][0], 0, -1) => $params_value]);
-                $key = substr($name_param[0][0], 0, -1);
-                $params[$key] = $params_value;
-            }
-            $route = str_replace('/', '\/', $route);
-            $route = preg_replace ('/{\w+:\\\\\w+}/', '\\w+', $route);
-            $route = '/^' . $route . '/';
+            $checkParams = $this->checkParamRouter($match_int, $route, 'str');
 
-
+            $route = $checkParams['route'];
+            $params = $checkParams['params'];
             array_push($this->routes, ['route' => $route, 'action' => $action, 'params' => $params]);
-
             return;
         }
 
@@ -60,6 +45,29 @@ class Router
         $route = '/^' . $route . '/';
 
         array_push($this->routes, ['route' => $route, 'action' => $action, 'params' => $params]);
+
+    }
+
+    public function checkParamRouter($match, $route, $type){
+        $type = array_search($type, $this->type);
+        $params = [];
+
+        foreach ($match as $param){
+            preg_match('/\w+:/', $param[0], $name_param, PREG_OFFSET_CAPTURE);
+            preg_match('/\w+:/', $param[0], $value_param, PREG_OFFSET_CAPTURE);
+
+            $params_value = '\/\\' . $type . '+\/';
+
+            $key = substr($name_param[0][0], 0, -1);
+            $params[$key] = $params_value;
+        }
+
+        $route = str_replace('/', '\/', $route);
+        $replacement = '\\' . $type . '+';
+        $route = preg_replace ('/{\w+:\\\\\w+}/', $replacement, $route);
+        $route = '/^' . $route . '/';
+
+        return ['route' => $route, 'params' => $params];
 
     }
 
