@@ -5,7 +5,7 @@
     <title><?php echo !empty($title) ? $title : 'mySite'; ?></title>
 
     <!-- Bootstrap core CSS -->
-    <link href="<?php echo ASSETS_URI; ?>css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="<?php echo ASSETS_URI; ?>css/bootstrap.min.css" rel="stylesheet">
 
 </head>
 <body>
