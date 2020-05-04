@@ -2,9 +2,12 @@
 
 namespace Controllers;
 
-class HomeController
+use Core\AbsController;
+use Core\View;
+
+class HomeController extends AbsController
 {
     public function index(){
-        echo __CLASS__;
+        View::render('home/index.php');
     }
 }

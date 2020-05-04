@@ -4,11 +4,13 @@
 namespace Controllers;
 
 
-class ErrorController
+use Core\AbsController;
+
+class ErrorController extends AbsController
 {
 
     public function error404(){
         echo __CLASS__;
-        return '111';
+        return;
     }
 }

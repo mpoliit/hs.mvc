@@ -1,5 +1,7 @@
 <?php
 require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__) . '/config/function.php';
+require_once dirname(__DIR__) . '/config/constants.php';
 
 /**
  * Error reporting
@@ -14,12 +16,19 @@ $router = new Router();
 
 require_once dirname(__DIR__) . '/config/routes.php';
 
-//$router->getRouters();
-
-try {
-    $router->dispatch($_SERVER['REQUEST_URI']);
-} catch (Exception $e){
-    echo '<pre>Message:'.$e->getMessage().'</pre>';
-    echo '<pre>File: '.$e->getFile().'</pre>';
-    echo '<pre>Line: '.$e->getLine().'</pre>';
+//echo '<pre>';
+//print_r($router->getRouters());
+//echo '</pre>';
+if (!preg_match('/assets/i', $_SERVER['REQUEST_URI'])){
+    try {
+        $router->dispatch($_SERVER['REQUEST_URI']);
+    } catch (Exception $e){
+        echo '<pre>Message:'.$e->getMessage().'</pre>';
+        echo '<pre>File: '.$e->getFile().'</pre>';
+        echo '<pre>Line: '.$e->getLine().'</pre>';
+    }
 }
+
+use Core\AbsModel;
+
+$absModel = new AbsModel();
