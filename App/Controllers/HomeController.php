@@ -4,10 +4,15 @@ namespace Controllers;
 
 use Core\AbsController;
 use Core\View;
+use Models\Post;
 
 class HomeController extends AbsController
 {
     public function index(){
-        View::render('home/index.php');
+        $post = new Post();
+
+        $postData = $post->selectAllPost();
+
+        View::render('home/index.php', ['data' => $postData]);
     }
 }
