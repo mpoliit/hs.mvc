@@ -9,8 +9,13 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "Core\\" : "Core",
-            "Controllers\\" : "App/Controllers"
+            "Core\\"            : "Core/",
+            "Controllers\\"     : "App/Controllers",
+            "Helpers\\"         : "App/Helpers",
+            "Models\\"          : "App/Models",
+            "Validator\\"       : "App/Validator",
+            "View\\"            : "App/View",
+            "Config\\"          : "App/"
         }
     }
 }
