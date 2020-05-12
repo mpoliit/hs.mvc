@@ -10,7 +10,7 @@ use Helpers\ImageHelpers;
 use Helpers\SessionHelpers;
 use Models\Post;
 use Models\User;
-use Validator\Post\PostValidator;
+use Validator\Post\PostCreateValidator;
 
 class PostsController extends AbsController
 {
@@ -38,7 +38,7 @@ class PostsController extends AbsController
         }
 
         $fields = filter_input_array(INPUT_POST, $_POST, 1);
-        $postValidate   = new PostValidator();
+        $postValidate   = new PostCreateValidator();
         $imageHelper    = new ImageHelpers();
 
         if ($postValidate->validate($fields)){
@@ -136,7 +136,7 @@ class PostsController extends AbsController
         $this->before();
 
         $fields = filter_input_array(INPUT_POST, $_POST, 1);
-        $postValidate   = new PostValidator();
+        $postValidate   = new PostCreateValidator();
 
         if ($postValidate->validate($fields)){
 
