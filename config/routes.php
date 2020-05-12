@@ -9,9 +9,16 @@ $router->addRoute('login', 'AuthController@login');
 $router->addRoute('registration', 'AuthController@registration');
 $router->addRoute('auth', 'AuthController@auth');
 $router->addRoute('logout', 'AuthController@logout');
+$router->addRoute('verify', 'AuthController@verifiAuth');
+$router->addRoute('2auth', 'AuthController@showQr');
+$router->addRoute('2auth-code', 'AuthController@showCodeQr');
+$router->addRoute('2auth-verify', 'AuthController@verify2auth');
+
 
 //user
 $router->addRoute('user/store', 'UserController@store');
+$router->addRoute('user/index', 'UserController@index');
+$router->addRoute('user/edit', 'UserController@edit');
 
 //post
 $router->addRoute('post/create', 'PostsController@create');

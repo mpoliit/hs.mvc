@@ -16,3 +16,14 @@ function show_alert()
        unset($_SESSION['notification']);
    }
 }
+
+function debug($value, $die = true)
+{
+    echo '<pre>';
+    print_r($value);
+    echo '</pre>';
+
+    if ($die){
+        die();
+    }
+}

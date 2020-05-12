@@ -22,7 +22,7 @@ class UserCreateVaidate extends AbsValidator
         'last_name'   => '/[A-Za-zА-Яа-я]{2,}/',
         'birthday'    => '/[\d]{4}-[\d]{2}-[\d]{2}/',
         'email'       => '/^((([0-9A-Za-z]{1}[-0-9A-z\.]{1,}[0-9A-Za-z]{1})|([0-9А-Яа-я]{1}[-0-9А-я\.]{1,}[0-9А-Яа-я]{1}))@([-A-Za-z]{1,}\.){1,2}[-A-Za-z]{2,})$/',
-        'pass'        => '/[a-zA-Z0-9]{8,}/'
+        'pass'        => '/[a-zA-Z0-9]{5,}/'
     ];
 
     public function checkEmailOnExist(string $email)
