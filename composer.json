@@ -6,7 +6,9 @@
             "email": "maks.poliit@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "phpgangsta/googleauthenticator": "dev-master"
+    },
     "autoload": {
         "psr-4": {
             "Core\\"            : "Core/",

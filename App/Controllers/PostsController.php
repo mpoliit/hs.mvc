@@ -10,7 +10,7 @@ use Helpers\ImageHelpers;
 use Helpers\SessionHelpers;
 use Models\Post;
 use Models\User;
-use Validator\Post\PostCreateValidator;
+use Validator\Post\PostValidator;
 
 class PostsController extends AbsController
 {
@@ -38,7 +38,7 @@ class PostsController extends AbsController
         }
 
         $fields = filter_input_array(INPUT_POST, $_POST, 1);
-        $postValidate   = new PostCreateValidator();
+        $postValidate   = new PostValidator();
         $imageHelper    = new ImageHelpers();
 
         if ($postValidate->validate($fields)){
@@ -100,7 +100,7 @@ class PostsController extends AbsController
                 'type' => 'danger',
                 'message' => 'Для удаления необходимо быть автором'
             ];
-            redirect('home');
+            redirect('');
             exit();
         } else {
             $post->delete($id);
@@ -109,7 +109,7 @@ class PostsController extends AbsController
                 'message' => 'Запись удалена'
             ];
             unlink(ASSETS_PATH . $postData['image']);
-            redirect('home');
+            redirect('');
             exit();
         }
     }
@@ -124,7 +124,7 @@ class PostsController extends AbsController
                 'type' => 'danger',
                 'message' => 'Для изменения необходимо быть автором'
             ];
-            redirect('home');
+            redirect('');
             exit();
         } else {
             View::render('post/edit.php', $postData);
@@ -136,7 +136,7 @@ class PostsController extends AbsController
         $this->before();
 
         $fields = filter_input_array(INPUT_POST, $_POST, 1);
-        $postValidate   = new PostCreateValidator();
+        $postValidate   = new PostValidator();
 
         if ($postValidate->validate($fields)){
 

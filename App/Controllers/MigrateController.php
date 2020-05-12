@@ -20,6 +20,7 @@ class MigrateController extends AbsController
                 `pass` TEXT NOT NULL,
                 `birthday` DATE NOT NULL,
                 `create_at` DATETIME NOT NULL,
+                `secret_key` VARCHAR(155) NOT NULL,
                 PRIMARY KEY (`id`)
             );
         ";

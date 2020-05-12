@@ -38,7 +38,7 @@
         <?php if (\Helpers\SessionHelpers::isUserLogin()): ?>
         <ul class="navbar-nav float-right">
             <li class="nav-item active">
-                <a class="nav-link" href="#"><?php echo \Helpers\SessionHelpers::getUserData('name');?></a>
+                <a class="nav-link" href="user/index"><?php echo \Helpers\SessionHelpers::getUserData('name');?></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/logout/">Выход</a>
