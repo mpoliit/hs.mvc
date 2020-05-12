@@ -4,7 +4,7 @@ namespace Validator\Post;
 
 use Core\AbsValidator;
 
-class PostValidator extends AbsValidator
+class PostCreateValidator extends AbsValidator
 {
 
     protected $errors = [
