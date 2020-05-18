@@ -13,7 +13,7 @@ class Router
         'w' => 'string'
     ];
 
-    public function addRoute($route, $params){
+    public function addRoute($route, $params, $namespace = 'Controllers'){
         //escape slashes
         $route = preg_replace('/\//', '\\/', $route);
         //convert parameters {id:\d+}
@@ -21,8 +21,9 @@ class Router
         $route = '/^' . $route . '$/i';
 
         $params = explode('@', $params);
-        $parameters['controller']   = $params[0];
-        $parameters['action']       = $params[1];
+        $parameters['controller']       = $params[0];
+        $parameters['action']           = $params[1];
+        $parameters['namespace']        = $namespace;
 
 
         $this->routes[$route] = $parameters;
@@ -38,12 +39,13 @@ class Router
 
         if($this->match($url)){
             $controller = $this->params['controller'];
-            if (class_exists('Controllers\\'.$controller)){
-                $controller = 'Controllers\\'.$controller;
+            if (class_exists($this->params['namespace'].'\\'.$controller)){
+                $controller = $this->params['namespace'].'\\'.$controller;
                 $action = $this->params['action'];
 
                 unset($this->params['controller']);
                 unset($this->params['action']);
+                unset($this->params['namespace']);
 
                 $controller = new $controller;
                 call_user_func_array([$controller, $action], $this->params);

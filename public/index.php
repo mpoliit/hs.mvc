@@ -15,9 +15,10 @@ session_start();
 $router = new Core\Router();
 
 require_once dirname(__DIR__) . '/config/routes.php';
+require_once dirname(__DIR__) . '/config/api_routes.php';
 
 //echo '<pre>';
-//print_r($router->getRouters());
+//print_r(password_hash('admin', PASSWORD_DEFAULT));
 //echo '</pre>';
 if (!preg_match('/assets/i', $_SERVER['REQUEST_URI'])){
     try {
